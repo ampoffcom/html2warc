@@ -4,13 +4,14 @@ html2warc creates warc files from local web resources
 """
 
 __date__ = '2015/12/30'
-__version__ = '0.7'
+__version__ = '0.7.1'
 __status__ = 'Testing'
 __license__ = 'The MIT License (MIT)'
 __copyright__ = 'Copyright (c) 2014 Steffen Fritz'
 __author__ = 'steffen fritz'
 __maintainer__ = 'steffen fritz'
-__contact__ = 'sfnfzs2600@gmail.com'
+__contributor__ = 'dragan espenschied'
+__contact__ = 'steffen AT fritz.wtf'
 
 
 import os
@@ -27,6 +28,7 @@ index_filenames = [
     re.compile(r'welcome\.html?', re.I)             # AOL server
 ]
 
+
 def source_to_warc(source_dir, targetwarc, createdate, rooturl):
     """
     :param source_dir: source directory
@@ -37,31 +39,31 @@ def source_to_warc(source_dir, targetwarc, createdate, rooturl):
     """
     for rootdir, _, files in os.walk(source_dir):
         for file_ in files:
-            
+
             possible_filenames_ = [file_]
 
             for index_filename_ in index_filenames:
                 if index_filename_.fullmatch(file_):
                     possible_filenames_.append('')
-                    continue # only one index per directory!
+                    continue  # only one index per directory!
 
             source_file_ = os.path.join(rootdir, file_)
             mime_type_ = mimetypes.guess_type(source_file_)
             file_size_ = os.path.getsize(source_file_)
-            block_length = 110 # init with len of network header
+            block_length = 110  # init with len of network header
 
             rootdir_parts = rootdir.split('/')
             source_dir_parts = source_dir.split('/')
             source_file_uri_parts = []
             path_step = 0
             for segment in rootdir_parts:
-                if  len(source_dir_parts) < path_step+1 or segment != source_dir_parts[path_step]:
+                if len(source_dir_parts) < path_step+1 or segment != source_dir_parts[path_step]:
                     source_file_uri_parts.append(segment)
                 path_step = path_step + 1
 
             for possible_filename_ in possible_filenames_:
 
-                source_file_uri = rooturl + '/'.join(source_file_uri_parts)+ '/' + possible_filename_
+                source_file_uri = rooturl + '/'.join(source_file_uri_parts) + '/' + possible_filename_
 
                 print("{}\t[{}]\t{}b".format(source_file_uri, mime_type_[0], file_size_))
 
