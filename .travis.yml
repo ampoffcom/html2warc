@@ -6,4 +6,4 @@ python:
   - "3.5"
 install:
   - "pip install"
-script: make test
+script: python html2warc.py
